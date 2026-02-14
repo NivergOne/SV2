@@ -1,3 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Feliz San Valentín ❤️</title>
+
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  background: black;
+  font-family: Arial, sans-serif;
+}
+
+#title {
+  position: absolute;
+  top: 30px;
+  width: 100%;
+  text-align: center;
+  font-size: 3em;
+  color: #ff4da6;
+  text-shadow: 0 0 20px #ff4da6, 0 0 40px #ff1a75;
+  z-index: 10;
+}
+
+#subtitle {
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+  text-align: center;
+  font-size: 1.5em;
+  color: #ff99cc;
+  text-shadow: 0 0 10px #ff66b2;
+}
+</style>
+</head>
+
+<body>
+
+<div id="title">Feliz San Valentín Amor 💖</div>
+<div id="subtitle">Con el pasar de los días solo me enamoro más de ti</div>
+
+<!-- THREE JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://threejs.org/examples/js/geometries/TextGeometry.js"></script>
+<script src="https://threejs.org/examples/js/loaders/FontLoader.js"></script>
+
 <script>
 const scene = new THREE.Scene();
 
@@ -14,7 +61,7 @@ document.body.appendChild(renderer.domElement);
 
 camera.position.z = 35;
 
-/* 💡 LUCES (IMPORTANTE para MeshStandardMaterial) */
+/* 💡 LUCES */
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
 scene.add(ambientLight);
 
@@ -44,7 +91,7 @@ const starsMaterial = new THREE.PointsMaterial({
 const stars = new THREE.Points(starsGeometry, starsMaterial);
 scene.add(stars);
 
-/* 💖 ANILLO GALAXIA */
+/* 💖 ANILLO */
 const ringGeometry = new THREE.TorusGeometry(12, 0.6, 16, 100);
 const ringMaterial = new THREE.MeshStandardMaterial({
   color: 0xff1493,
@@ -75,7 +122,7 @@ for (let i = 0; i < 8; i++) {
 const frases = [
   "Pan de nuez",
   "Te gustan las biblias? jaja",
-  "Eres una hermosa maquina de destruccion",
+  "Eres una hermosa máquina de destrucción",
   "Te amo totopo picante",
   "Te convertiste en la luna que me gustaba admirar",
   "Mi corazón es tuyo ❤️"
@@ -152,7 +199,7 @@ function animate() {
 
 animate();
 
-/* 📱 RESPONSIVE */
+/* RESPONSIVE */
 window.addEventListener('resize', () => {
   camera.aspect =
     window.innerWidth/window.innerHeight;
@@ -165,3 +212,6 @@ window.addEventListener('resize', () => {
   );
 });
 </script>
+
+</body>
+</html>
