@@ -35,8 +35,8 @@ body {
 </head>
 <body>
 
-<div id="title">Feliz San Valentín ❤️</div>
-<div id="subtitle">Te amo hoy y siempre ✨</div>
+<div id="title">Feliz San Valentine Amor</div>
+<div id="subtitle">Con el pasar de los dias solo me enamoro mas de ti</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
@@ -88,6 +88,38 @@ for (let i = 0; i < 8; i++) {
   hearts.push(heart);
 }
 
+// 💌 FRASES
+const frases = [
+  "Pan de nuez",
+  "Te gustan las biblias? jaja",
+  "Eres una hermosa maquina de destruccion",
+  "Te amo totopo picante",
+  "Te convertiste en la luna que me gustaba admirar",
+  "Mi corazón es tuyo ❤️"
+];
+
+const loader = new THREE.FontLoader();
+loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font) {
+
+  frases.forEach((texto, index) => {
+    const textGeometry = new THREE.TextGeometry(texto, {
+      font: font,
+      size: 1,
+      height: 0.2
+    });
+
+    const textMaterial = new THREE.MeshBasicMaterial({ color: 0xff99cc });
+    const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+
+    textMesh.userData.angleOffset = index * (Math.PI * 2 / frases.length);
+    scene.add(textMesh);
+
+    textMesh.userData.isText = true;
+  });
+
+});
+
+
 function animate() {
   requestAnimationFrame(animate);
 
@@ -101,6 +133,14 @@ function animate() {
     heart.position.x = Math.cos(angle) * 15;
     heart.position.z = Math.sin(angle) * 15;
   });
+scene.children.forEach(obj => {
+  if (obj.userData.isText) {
+    const angle = Date.now() * 0.0005 + obj.userData.angleOffset;
+    obj.position.x = Math.cos(angle) * 18;
+    obj.position.z = Math.sin(angle) * 18;
+    obj.lookAt(camera.position);
+  }
+});
 
   renderer.render(scene, camera);
 }
