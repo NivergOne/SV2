@@ -1,85 +1,68 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Feliz San Valentín ❤️</title>
-<style>
-body {
-  margin: 0;
-  overflow: hidden;
-  background: black;
-  font-family: 'Arial', sans-serif;
-}
-
-#title {
-  position: absolute;
-  top: 30px;
-  width: 100%;
-  text-align: center;
-  font-size: 3em;
-  color: #ff4da6;
-  text-shadow: 0 0 20px #ff4da6, 0 0 40px #ff1a75;
-  z-index: 10;
-}
-
-#subtitle {
-  position: absolute;
-  bottom: 40px;
-  width: 100%;
-  text-align: center;
-  font-size: 1.5em;
-  color: #ff99cc;
-  text-shadow: 0 0 10px #ff66b2;
-}
-</style>
-</head>
-<body>
-
-<div id="title">Feliz San Valentine Amor</div>
-<div id="subtitle">Con el pasar de los dias solo me enamoro mas de ti</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
 <script>
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth/window.innerHeight,
+  0.1,
+  1000
+);
+
 const renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-camera.position.z = 30;
+camera.position.z = 35;
 
-// 🌌 Estrellas
+/* 💡 LUCES (IMPORTANTE para MeshStandardMaterial) */
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+scene.add(ambientLight);
+
+const pointLight = new THREE.PointLight(0xff69b4, 2, 200);
+pointLight.position.set(0, 0, 40);
+scene.add(pointLight);
+
+/* 🌌 ESTRELLAS */
 const starsGeometry = new THREE.BufferGeometry();
-const starsCount = 5000;
+const starsCount = 4000;
 
 const positions = new Float32Array(starsCount * 3);
 for (let i = 0; i < starsCount * 3; i++) {
-  positions[i] = (Math.random() - 0.5) * 200;
+  positions[i] = (Math.random() - 0.5) * 300;
 }
 
-starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+starsGeometry.setAttribute(
+  'position',
+  new THREE.BufferAttribute(positions, 3)
+);
 
 const starsMaterial = new THREE.PointsMaterial({
   color: 0xffffff,
-  size: 0.7
+  size: 0.6
 });
 
 const stars = new THREE.Points(starsGeometry, starsMaterial);
 scene.add(stars);
 
-// 💖 Anillo galaxia
-const ringGeometry = new THREE.TorusGeometry(10, 0.8, 16, 100);
-const ringMaterial = new THREE.MeshBasicMaterial({
+/* 💖 ANILLO GALAXIA */
+const ringGeometry = new THREE.TorusGeometry(12, 0.6, 16, 100);
+const ringMaterial = new THREE.MeshStandardMaterial({
   color: 0xff1493,
+  emissive: 0xff69b4,
+  emissiveIntensity: 1.5,
   wireframe: true
 });
 const ring = new THREE.Mesh(ringGeometry, ringMaterial);
 scene.add(ring);
 
-// 💗 Corazones orbitando
+/* 💗 CORAZONES */
 const heartGeometry = new THREE.SphereGeometry(1, 32, 32);
-const heartMaterial = new THREE.MeshBasicMaterial({color: 0xff66b2});
+const heartMaterial = new THREE.MeshStandardMaterial({
+  color: 0xff66b2,
+  emissive: 0xff1493,
+  emissiveIntensity: 1
+});
+
 const hearts = [];
 
 for (let i = 0; i < 8; i++) {
@@ -88,7 +71,7 @@ for (let i = 0; i < 8; i++) {
   hearts.push(heart);
 }
 
-// 💌 FRASES
+/* 💌 FRASES */
 const frases = [
   "Pan de nuez",
   "Te gustan las biblias? jaja",
@@ -99,60 +82,86 @@ const frases = [
 ];
 
 const loader = new THREE.FontLoader();
-loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font) {
+
+loader.load(
+'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json',
+function(font) {
 
   frases.forEach((texto, index) => {
+
     const textGeometry = new THREE.TextGeometry(texto, {
       font: font,
-      size: 1,
-      height: 0.2
+      size: 1.5,
+      height: 0.3,
+      curveSegments: 12
     });
 
-    const textMaterial = new THREE.MeshBasicMaterial({ color: 0xff99cc });
+    textGeometry.center();
+
+    const textMaterial = new THREE.MeshStandardMaterial({
+      color: 0xff99cc,
+      emissive: 0xff1493,
+      emissiveIntensity: 1.8
+    });
+
     const textMesh = new THREE.Mesh(textGeometry, textMaterial);
 
-    textMesh.userData.angleOffset = index * (Math.PI * 2 / frases.length);
-    scene.add(textMesh);
+    textMesh.userData.angleOffset =
+      index * (Math.PI * 2 / frases.length);
 
     textMesh.userData.isText = true;
+
+    scene.add(textMesh);
   });
 
 });
 
-
+/* 🎬 ANIMACIÓN */
 function animate() {
   requestAnimationFrame(animate);
 
-  ring.rotation.x += 0.01;
-  ring.rotation.y += 0.01;
+  ring.rotation.x += 0.003;
+  ring.rotation.y += 0.005;
 
-  stars.rotation.y += 0.0005;
+  stars.rotation.y += 0.0003;
 
   hearts.forEach((heart, index) => {
-    const angle = Date.now() * 0.001 + index * (Math.PI * 2 / hearts.length);
-    heart.position.x = Math.cos(angle) * 15;
-    heart.position.z = Math.sin(angle) * 15;
+    const angle =
+      Date.now() * 0.001 +
+      index * (Math.PI * 2 / hearts.length);
+
+    heart.position.x = Math.cos(angle) * 18;
+    heart.position.z = Math.sin(angle) * 18;
   });
-scene.children.forEach(obj => {
-  if (obj.userData.isText) {
-    const angle = Date.now() * 0.0005 + obj.userData.angleOffset;
-    obj.position.x = Math.cos(angle) * 18;
-    obj.position.z = Math.sin(angle) * 18;
-    obj.lookAt(camera.position);
-  }
-});
+
+  scene.children.forEach(obj => {
+    if (obj.userData.isText) {
+      const angle =
+        Date.now() * 0.0004 +
+        obj.userData.angleOffset;
+
+      obj.position.x = Math.cos(angle) * 22;
+      obj.position.z = Math.sin(angle) * 22;
+
+      obj.lookAt(camera.position);
+    }
+  });
 
   renderer.render(scene, camera);
 }
 
 animate();
 
+/* 📱 RESPONSIVE */
 window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.aspect =
+    window.innerWidth/window.innerHeight;
+
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+  );
 });
 </script>
-
-</body>
-</html>
