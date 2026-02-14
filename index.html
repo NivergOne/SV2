@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Feliz San Valentín ❤️</title>
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  background: black;
+  font-family: 'Arial', sans-serif;
+}
+
+#title {
+  position: absolute;
+  top: 30px;
+  width: 100%;
+  text-align: center;
+  font-size: 3em;
+  color: #ff4da6;
+  text-shadow: 0 0 20px #ff4da6, 0 0 40px #ff1a75;
+  z-index: 10;
+}
+
+#subtitle {
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+  text-align: center;
+  font-size: 1.5em;
+  color: #ff99cc;
+  text-shadow: 0 0 10px #ff66b2;
+}
+</style>
+</head>
+<body>
+
+<div id="title">Feliz San Valentín ❤️</div>
+<div id="subtitle">Te amo hoy y siempre ✨</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({antialias: true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+camera.position.z = 30;
+
+// 🌌 Estrellas
+const starsGeometry = new THREE.BufferGeometry();
+const starsCount = 5000;
+
+const positions = new Float32Array(starsCount * 3);
+for (let i = 0; i < starsCount * 3; i++) {
+  positions[i] = (Math.random() - 0.5) * 200;
+}
+
+starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+const starsMaterial = new THREE.PointsMaterial({
+  color: 0xffffff,
+  size: 0.7
+});
+
+const stars = new THREE.Points(starsGeometry, starsMaterial);
+scene.add(stars);
+
+// 💖 Anillo galaxia
+const ringGeometry = new THREE.TorusGeometry(10, 0.8, 16, 100);
+const ringMaterial = new THREE.MeshBasicMaterial({
+  color: 0xff1493,
+  wireframe: true
+});
+const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+scene.add(ring);
+
+// 💗 Corazones orbitando
+const heartGeometry = new THREE.SphereGeometry(1, 32, 32);
+const heartMaterial = new THREE.MeshBasicMaterial({color: 0xff66b2});
+const hearts = [];
+
+for (let i = 0; i < 8; i++) {
+  const heart = new THREE.Mesh(heartGeometry, heartMaterial);
+  scene.add(heart);
+  hearts.push(heart);
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  ring.rotation.x += 0.01;
+  ring.rotation.y += 0.01;
+
+  stars.rotation.y += 0.0005;
+
+  hearts.forEach((heart, index) => {
+    const angle = Date.now() * 0.001 + index * (Math.PI * 2 / hearts.length);
+    heart.position.x = Math.cos(angle) * 15;
+    heart.position.z = Math.sin(angle) * 15;
+  });
+
+  renderer.render(scene, camera);
+}
+
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+
+</body>
+</html>
